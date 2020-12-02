@@ -12,6 +12,9 @@ type fakeAPI struct {
 	FakeIssuesCreateComment       func(ctx context.Context, number int, comment *github.IssueComment) (*github.IssueComment, *github.Response, error)
 	FakeIssuesDeleteComment       func(ctx context.Context, commentID int64) (*github.Response, error)
 	FakeIssuesListComments        func(ctx context.Context, number int, opt *github.IssueListCommentsOptions) ([]*github.IssueComment, *github.Response, error)
+	FakePullRequestsCreateComment func(ctx context.Context, number int, comment *github.PullRequestComment) (*github.PullRequestComment, *github.Response, error)
+	FakePullRequestsDeleteComment func(ctx context.Context, commentID int64) (*github.Response, error)
+	FakePullRequestsListComments  func(ctx context.Context, number int, opt *github.PullRequestListCommentsOptions) ([]*github.PullRequestComment, *github.Response, error)
 	FakeIssuesListLabels          func(ctx context.Context, number int, opts *github.ListOptions) ([]*github.Label, *github.Response, error)
 	FakeIssuesAddLabels           func(ctx context.Context, number int, labels []string) ([]*github.Label, *github.Response, error)
 	FakeIssuesRemoveLabel         func(ctx context.Context, number int, label string) (*github.Response, error)
@@ -30,6 +33,18 @@ func (g *fakeAPI) IssuesDeleteComment(ctx context.Context, commentID int64) (*gi
 
 func (g *fakeAPI) IssuesListComments(ctx context.Context, number int, opt *github.IssueListCommentsOptions) ([]*github.IssueComment, *github.Response, error) {
 	return g.FakeIssuesListComments(ctx, number, opt)
+}
+
+func (g *fakeAPI) PullRequestsCreateComment(ctx context.Context, number int, comment *github.PullRequestComment) (*github.PullRequestComment, *github.Response, error) {
+	return g.FakePullRequestsCreateComment(ctx, number, comment)
+}
+
+func (g *fakeAPI) PullRequestsDeleteComment(ctx context.Context, commentID int64) (*github.Response, error) {
+	return g.FakePullRequestsDeleteComment(ctx, commentID)
+}
+
+func (g *fakeAPI) PullRequestsListComments(ctx context.Context, number int, opt *github.PullRequestListCommentsOptions) ([]*github.PullRequestComment, *github.Response, error) {
+	return g.FakePullRequestsListComments(ctx, number, opt)
 }
 
 func (g *fakeAPI) IssuesListLabels(ctx context.Context, number int, opt *github.ListOptions) ([]*github.Label, *github.Response, error) {
@@ -76,6 +91,29 @@ func newFakeAPI() fakeAPI {
 				},
 				&github.IssueComment{
 					ID:   github.Int64(371765743),
+					Body: github.String("comment 2"),
+				},
+			}
+			return comments, nil, nil
+		},
+		FakePullRequestsCreateComment: func(ctx context.Context, number int, comment *github.PullRequestComment) (*github.PullRequestComment, *github.Response, error) {
+			return &github.PullRequestComment{
+				ID:   github.Int64(471748792),
+				Body: github.String("comment 1"),
+			}, nil, nil
+		},
+		FakePullRequestsDeleteComment: func(ctx context.Context, commentID int64) (*github.Response, error) {
+			return nil, nil
+		},
+		FakePullRequestsListComments: func(ctx context.Context, number int, opt *github.PullRequestListCommentsOptions) ([]*github.PullRequestComment, *github.Response, error) {
+			var comments []*github.PullRequestComment
+			comments = []*github.PullRequestComment{
+				&github.PullRequestComment{
+					ID:   github.Int64(471748792),
+					Body: github.String("comment 1"),
+				},
+				&github.PullRequestComment{
+					ID:   github.Int64(471765743),
 					Body: github.String("comment 2"),
 				},
 			}
